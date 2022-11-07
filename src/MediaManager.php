@@ -42,17 +42,17 @@ class MediaManager
      */
     protected $fileTypes = [
         'image' => 'png|jpg|jpeg|ico|gif|bmp|svg|wbmp',
-        'xls'   => 'xls|xlt|xla|xlsx|xltx|xlsm|xltm|xlam|xlsb',
-        'word'  => 'doc|docx|dot|dotx|docm|dotm',
-        'ppt'   => 'ppt|pptx|pptm',
-        'pdf'   => 'pdf',
-        'code'  => 'php|js|java|python|ruby|go|c|cpp|sql|m|h|json|html|aspx',
-        'zip'   => 'zip|tar\.gz|rar|rpm',
-        'text'  => 'txt|pac|log|md',
+        'xls' => 'xls|xlt|xla|xlsx|xltx|xlsm|xltm|xlam|xlsb',
+        'word' => 'doc|docx|dot|dotx|docm|dotm',
+        'ppt' => 'ppt|pptx|pptm',
+        'pdf' => 'pdf',
+        'code' => 'php|js|java|python|ruby|go|c|cpp|sql|m|h|json|html|aspx',
+        'zip' => 'zip|tar\.gz|rar|rpm',
+        'text' => 'txt|pac|log|md',
         'audio' => 'mp3|wav|flac|3pg|aa|aac|ape|au|m4a|mpc|ogg',
         'video' => 'mkv|rmvb|flv|mp4|avi|wmv|rm|asf|mpeg',
     ];
-    
+
     /**
      * 创建
      */
@@ -77,10 +77,10 @@ class MediaManager
     public function withDisk($disk)
     {
         $this->storage = Storage::disk($disk);
-        
+
         return $this;
     }
-    
+
     /**
      * 设置目录
      */
@@ -96,40 +96,40 @@ class MediaManager
     public function ls($type = 'image', $order = 'time')
     {
         $files = $this->storage->files($this->path);
-        
+
         $directories = $this->storage->directories($this->path);
-        
+
         $manager = $this;
         $files = $this->formatFiles($files)
-            ->map(function($item) use($type, $manager) {
+            ->map(function ($item) use ($type, $manager) {
                 if ($type == 'blend') {
                     return $item;
                 }
-                
+
                 $fileType = $manager->detectFileType($item['name']);
                 if ($type == $fileType) {
                     return $item;
                 }
-                
+
                 return null;
             })
-            ->filter(function($item) {
-                return ! empty($item);
+            ->filter(function ($item) {
+                return !empty($item);
             });
-        
+
         $list = $this->formatDirectories($directories)
             ->merge($files);
-        
+
         if ($order == 'name') {
             $list = $list->sort(function ($item) {
-                    return $item['name'];
-                });
+                return $item['name'];
+            });
         } else {
             $list = $list->sortByDesc(function ($item) {
-                    return $item['time'];
-                });
+                return $item['time'];
+            });
         }
-            
+
         return $list->all();
     }
 
@@ -191,7 +191,7 @@ class MediaManager
      * 上传
      *
      * @param UploadedFile[] $files
-     * @param string         $dir
+     * @param string $dir
      *
      * @return mixed
      */
@@ -200,18 +200,18 @@ class MediaManager
         if (empty($files)) {
             return false;
         }
-        
+
         foreach ($files as $file) {
             $this->storage->putFileAs(
-                $this->path, 
-                $file, 
+                $this->path,
+                $file,
                 $this->getPutFileName($file)
             );
         }
 
         return true;
     }
-    
+
     /**
      * 检测文件上传类型
      */
@@ -220,10 +220,10 @@ class MediaManager
         if (empty($files)) {
             return false;
         }
-        
+
         foreach ($files as $file) {
             $fileExtension = $file->getClientOriginalExtension();
-            $fileType = $this->detectFileType('file.'.$fileExtension);
+            $fileType = $this->detectFileType('file.' . $fileExtension);
             if ($fileType != $type) {
                 return false;
             }
@@ -231,17 +231,17 @@ class MediaManager
 
         return true;
     }
-    
+
     /**
      * 设置命名方式
      */
     public function setNametype($type = 'uniqid')
     {
         $this->nametype = $type;
-        
+
         return $this;
     }
-    
+
     /**
      * 获取最后的命名
      */
@@ -251,16 +251,16 @@ class MediaManager
             case 'datetime':
                 return $this->generateDatetimeName($file);
                 break;
-            
+
             case 'sequence':
                 return $this->generateSequenceName($file);
                 break;
-            
+
             // 原始命名
             case 'original':
                 return $this->generateClientName($file);
                 break;
-            
+
             case 'uniqid':
             default:
                 return $this->generateUniqueName($file);
@@ -273,7 +273,7 @@ class MediaManager
      */
     public function generateDatetimeName($file)
     {
-        return date('YmdHis').mt_rand(10000, 99999).'.'.$file->getClientOriginalExtension();
+        return date('YmdHis') . mt_rand(10000, 99999) . '.' . $file->getClientOriginalExtension();
     }
 
     /**
@@ -281,7 +281,7 @@ class MediaManager
      */
     public function generateUniqueName($file)
     {
-        return md5(uniqid().microtime()).'.'.$file->getClientOriginalExtension();
+        return md5(uniqid() . microtime()) . '.' . $file->getClientOriginalExtension();
     }
 
     /**
@@ -301,13 +301,16 @@ class MediaManager
 
         return $new;
     }
-    
+
     /**
      * 原始命名
      */
     public function generateClientName($file)
     {
-        return $file->getClientOriginalName() . '.' . $file->getClientOriginalExtension();
+        if (!strripos($file->getClientOriginalName(), '.')) {
+            return $file->getClientOriginalName() . '.' . $file->getClientOriginalExtension();
+        }
+        return $file->getClientOriginalName();
     }
 
     /**
@@ -339,7 +342,7 @@ class MediaManager
             'path' => $this->path,
         ];
     }
-    
+
     /**
      * 生成url
      */
@@ -348,7 +351,7 @@ class MediaManager
         if (URL::isValidUrl($url)) {
             return $url;
         }
-        
+
         return $this->storage->url($url);
     }
 
@@ -359,15 +362,15 @@ class MediaManager
     {
         $files = array_map(function ($file) {
             return [
-                'icon'      => '',
-                'name'      => $file,
+                'icon' => '',
+                'name' => $file,
                 'namesmall' => pathinfo($file, PATHINFO_BASENAME),
-                'preview'   => $this->getFilePreview($file),
-                'isDir'     => false,
-                'size'      => $this->getFilesize($file),
-                'url'       => $this->storage->url($file),
-                'time'      => $this->getFileChangeTime($file),
-                'type'      => $this->detectFileType($file)
+                'preview' => $this->getFilePreview($file),
+                'isDir' => false,
+                'size' => $this->getFilesize($file),
+                'url' => $this->storage->url($file),
+                'time' => $this->getFileChangeTime($file),
+                'type' => $this->detectFileType($file)
             ];
         }, $files);
 
@@ -383,15 +386,15 @@ class MediaManager
 
         $dirs = array_map(function ($dir) use ($preview) {
             return [
-                'icon'      => '',
-                'name'      => $dir,
+                'icon' => '',
+                'name' => $dir,
                 'namesmall' => basename($dir),
-                'preview'   => str_replace('__path__', $dir, $preview),
-                'isDir'     => true,
-                'size'      => '-',
-                'url'       => $this->storage->url($dir),
-                'time'      => $this->getFileChangeTime($dir),
-                'type'      => 'dir',
+                'preview' => str_replace('__path__', $dir, $preview),
+                'isDir' => true,
+                'size' => '-',
+                'url' => $this->storage->url($dir),
+                'time' => $this->getFileChangeTime($dir),
+                'type' => 'dir',
             ];
         }, $dirs);
 
@@ -409,11 +412,11 @@ class MediaManager
         $navigation = [];
 
         foreach ($folders as $folder) {
-            $path = rtrim($path, '/').'/'.$folder;
+            $path = rtrim($path, '/') . '/' . $folder;
 
             $navigation[] = [
-                'name'  => $folder,
-                'url'   => $path,
+                'name' => $folder,
+                'url' => $path,
             ];
         }
 
@@ -426,7 +429,7 @@ class MediaManager
             case 'image':
                 $url = $this->storage->url($file);
                 if ($url) {
-                    $preview = '<span class="file-icon has-img"><img src="'.$url.'" alt="'.$url.'"></span>';
+                    $preview = '<span class="file-icon has-img"><img src="' . $url . '" alt="' . $url . '"></span>';
                 } else {
                     $preview = '<span class="file-icon"><i class="fa fa-file-image-o"></i></span>';
                 }
@@ -434,13 +437,13 @@ class MediaManager
 
             case 'video':
                 /**
-                if ($this->storage->getDriver()->getConfig()->has('url')) {
-                    $url = $this->storage->url($file);
-                    $preview = "<span class=\"file-icon has-video\"><video width='30%' src=\"$url\" alt=\"Attachment\"></span>";
-                } else {
-                    $preview = '<span class="file-icon"><i class="fa fa-file-video-o"></i></span>';
-                }
-                */
+                 * if ($this->storage->getDriver()->getConfig()->has('url')) {
+                 * $url = $this->storage->url($file);
+                 * $preview = "<span class=\"file-icon has-video\"><video width='30%' src=\"$url\" alt=\"Attachment\"></span>";
+                 * } else {
+                 * $preview = '<span class="file-icon"><i class="fa fa-file-video-o"></i></span>';
+                 * }
+                 */
                 $preview = '<span class="file-icon"><i class="fa fa-file-video-o"></i></span>';
                 break;
 
@@ -499,18 +502,18 @@ class MediaManager
     /**
      * 提前完成裁剪等操作
      *
-     * @param array  $methods<method, arguments> arguments = []
+     * @param array $methods <method, arguments> arguments = []
      * @param UploadedFile $file
      */
     public function prepareFile($methods, UploadedFile $file)
     {
         $this->callInterventionMethods($methods, $file->getRealPath(), $file->getMimeType());
     }
-    
+
     /**
      * 执行裁剪等操作
      *
-     * @param array  $methods<method, arguments> arguments = []
+     * @param array $methods <method, arguments> arguments = []
      * @param string $target
      * @param string $mime
      *
@@ -518,7 +521,7 @@ class MediaManager
      */
     public function callInterventionMethods($methods, $target, $mime)
     {
-        if (! empty($methods)) {
+        if (!empty($methods)) {
             $image = ImageManagerStatic::make($target);
 
             $mime = $mime ?: finfo_file(finfo_open(FILEINFO_MIME_TYPE), $target);
@@ -548,7 +551,7 @@ class MediaManager
      */
     public function destroyThumbnail($thumbnails, $file = null)
     {
-        if (! $file) {
+        if (!$file) {
             return;
         }
 
@@ -563,9 +566,9 @@ class MediaManager
         foreach ($thumbnails as $name => $_) {
             $ext = pathinfo($file, PATHINFO_EXTENSION);
 
-            $path = Str::replaceLast('.'.$ext, '', $file);
+            $path = Str::replaceLast('.' . $ext, '', $file);
 
-            $path = $path.'-'.$name.'.'.$ext;
+            $path = $path . '-' . $name . '.' . $ext;
 
             if ($this->storage->exists($path)) {
                 $this->storage->delete($path);
@@ -586,9 +589,9 @@ class MediaManager
         foreach ($thumbnails as $name => $size) {
             $ext = pathinfo($this->name, PATHINFO_EXTENSION);
 
-            $path = Str::replaceLast('.'.$ext, '', $this->name);
+            $path = Str::replaceLast('.' . $ext, '', $this->name);
 
-            $path = $path.'-'.$name.'.'.$ext;
+            $path = $path . '-' . $name . '.' . $ext;
 
             /** @var \Intervention\Image\Image $image */
             $image = InterventionImage::make($file);
@@ -598,7 +601,7 @@ class MediaManager
                 $constraint->aspectRatio();
             });
 
-            if (! is_null($this->storagePermission)) {
+            if (!is_null($this->storagePermission)) {
                 $this->storage->put($this->formatPath($this->path, $path), $image->encode(), $this->storagePermission);
             } else {
                 $this->storage->put($this->formatPath($this->path, $path), $image->encode());
@@ -620,7 +623,7 @@ class MediaManager
             for ($i = 0; $bytes > 1024; $i++) {
                 $bytes /= 1024;
             }
-            return round($bytes, 2).' '.$units[$i];
+            return round($bytes, 2) . ' ' . $units[$i];
         } catch (\ErrorException $e) {
             return '未知';
         }
@@ -635,7 +638,7 @@ class MediaManager
             return '';
         }
     }
-    
+
     /**
      * 格式化路径
      */
