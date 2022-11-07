@@ -1,5 +1,5 @@
 {
-    "name": "lake/form-media",
+    "name": "back/dcat-form-media",
     "alias": "form-media",
     "description": "Dcat-admin image/video input extension.",
     "type": "library",
@@ -10,13 +10,13 @@
         "form-media", 
         "extension"
     ],
-    "homepage": "https://github.com/deatil/dcat-form-media",
+    "homepage": "https://github.com/haoqianlei/dcat-form-media",
     "license": "MIT",
     "authors": [
         {
-            "name": "deatil",
-            "email": "deatil@github.com",
-            "homepage": "https://github.com/deatil"
+            "name": "Back",
+            "email": "1300657068@qq.com",
+            "homepage": "https://github.com/haoqianlei"
         }
     ],
     "require": {
