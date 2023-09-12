@@ -320,7 +320,7 @@ class MediaManager
     {
         $path = $this->formatPath($this->path, $name);
 
-        return $this->storage->makeDirectory($path);
+        return $this->storage->put($path . '/' . '1.txt', 'init');
     }
 
     /**
