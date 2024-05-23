@@ -49,7 +49,7 @@
             data-media="lake-form-media-{{ str_replace(['[', ']'], ['-', ''], $name) }}"
             aria-labelledby="LakeFormMediaModalLabel"
         >
-            <div class="modal-dialog" role="document" style="width: 50vw">
+            <div class="modal-dialog" role="document" style="width: 50vw;max-height: none;">
                 <div class="modal-content"  style="width: 50vw">
                   <div class="modal-header">
                     <h4 class="modal-title" id="LakeFormMediaModalLabel">{{ LakeFormMedia::trans('form-media.check_image') }}</h4>
