@@ -50,7 +50,7 @@
             aria-labelledby="LakeFormMediaModalLabel"
         >
             <div class="modal-dialog" role="document">
-                <div class="modal-content"  style="width: 100%">
+                <div class="modal-content"  style="width: 50vw">
                   <div class="modal-header">
                     <h4 class="modal-title" id="LakeFormMediaModalLabel">{{ LakeFormMedia::trans('form-media.check_image') }}</h4>
                     <button type="button" 
@@ -84,7 +84,7 @@
                         </div>
                     </div>
 
-                    <div class="modal-body pre-scrollable" >
+                    <div class="modal-body pre-scrollable" style="max-height: none;height: 60vh">
                         <!-- 页面导航 -->
                         <ol class="breadcrumb lake-form-media-nav-ol" data-current-path="/" style="margin-bottom: 10px;">
                             <li class="breadcrumb-item lake-form-media-nav-li">

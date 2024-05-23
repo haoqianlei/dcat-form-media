@@ -51,7 +51,7 @@ class MediaManager
         'text' => 'txt|pac|log|md',
         'audio' => 'mp3|wav|flac|3pg|aa|aac|ape|au|m4a|mpc|ogg',
         'video' => 'mkv|rmvb|flv|mp4|avi|wmv|rm|asf|mpeg',
-        'font' => 'otf|ttf'
+        'blend' => 'otf|ttf'
     ];
 
     /**
